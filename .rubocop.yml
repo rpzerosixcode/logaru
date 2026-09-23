@@ -1,0 +1,93 @@
+# RuboCop configuration for the Logstyout project.
+# Uses rubocop and rubocop-rake (declared as development dependencies in the gemspec).
+
+plugins:
+  - rubocop-rake
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - "vendor/**/*"
+    - "tmp/**/*"
+    - "coverage/**/*"
+    - "pkg/**/*"
+
+# --- Layout ---------------------------------------------------------------
+
+# The project standardizes on 4-space indentation (see logstyout.gemspec).
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Layout/IndentationStyle:
+  EnforcedStyle: spaces
+
+Layout/IndentationWidth:
+  Width: 4
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - "logstyout.gemspec"
+
+# --- Style ----------------------------------------------------------------
+
+Style/Documentation:
+  # Top-level namespaces/classes must be documented; skip the version file.
+  Exclude:
+    - "lib/lso/version.rb"
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+# Prefer %i[] and %w[] literals when all elements are symbols/words.
+Style/SymbolArray:
+  EnforcedStyle: percent
+  MinSize: 3
+
+Style/WordArray:
+  EnforcedStyle: percent
+  MinSize: 3
+
+# --- Metrics --------------------------------------------------------------
+
+Metrics/MethodLength:
+  Max: 20
+
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/ClassLength:
+  Max: 200
+
+# --- RSpec ----------------------------------------------------------------
+
+# RSpec files are described by their subject; documentation comments are optional.
+# Enabled only if rubocop-rspec gets added as a development dependency later.
+# require: rubocop-rspec
+
+# --- Rake -----------------------------------------------------------------
+
+Rake/Desc:
+  Enabled: true
+
+# --- Gemspec --------------------------------------------------------------
+
+# Development dependencies are intentionally declared in the gemspec so the
+# gem remains installable/testable via `gemspec` in the Gemfile. Enforce
+# that style instead of RuboCop's default (Gemfile).
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec

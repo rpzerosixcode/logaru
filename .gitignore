@@ -1,0 +1,60 @@
+# Dependencies
+/vendor/bundle/
+/vendor/bundle/**/.keep
+
+# Build and packaging artifacts
+*.gem
+build/
+pkg/
+.gem/
+
+# Temporary files
+/tmp/
+tmp/*
+!tmp/.gitkeep
+
+# Development
+.dev/
+.dev/**
+
+# Tools
+/.rubocop_cache/
+.rubocop-https*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Operating system
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Images
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.svg
+*.bmp
+*.ico
+*.tif
+*.tiff
+*.avif
+
+# Logs
+*.log
+/log/*
+!/log/.gitkeep
+
+# Coverage
+/coverage/

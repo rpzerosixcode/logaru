@@ -1,0 +1,39 @@
+# Dependabot configuration for the logstyout gem.
+#
+# Keeps Bundler dependencies (Gemfile/gemspec) and GitHub Actions
+# (workflows in .github/workflows) up to date via weekly pull requests.
+
+version: 2
+
+updates:
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      bundler-development:
+        patterns:
+          - "rake"
+          - "rspec*"
+          - "rubocop*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(ci)"
