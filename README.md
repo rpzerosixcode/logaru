@@ -37,7 +37,22 @@ Logaru::VERSION # => "0.1.0"
 Logaru.root     # => absolute path to the gem root
 ```
 
-That is the whole public API in `0.1.0`. The stylish logging API is not implemented yet — follow the repository for upcoming releases.
+The logger supports `debug`, `info`, `warn`, `error`, `fatal`, and `unknown` messages. Levels can be configured with a `Logaru::Level` constant, a level name, or a symbol:
+
+```ruby
+logger = Logaru::Logger.new(level: :info)
+logger.debug("This message is ignored")
+logger.info("Application started", progname: "web")
+logger.error("An unexpected error occurred")
+```
+
+Pass `file:` to append messages to a file. The default formatter can be replaced with a custom block:
+
+```ruby
+Logaru::Formatter.pattern do |severity, datetime, progname, message|
+  "[#{datetime}] #{progname || "app"} #{severity}: #{message}\n"
+end
+```
 
 ## Development
 
