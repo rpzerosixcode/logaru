@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative "lso/version"
+require_relative "logaru/version"
 
-# Entry point of the Logstyout library.
-module LSO
+# Entry point of the Logaru library.
+module Logaru
     class << self
         # Returns the absolute path to the gem root directory.
         def root

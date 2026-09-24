@@ -2,7 +2,7 @@
 
 require "bundler/setup"
 
-require "lso"
+require "logaru"
 
 RSpec.configure do |config|
     config.expect_with :rspec do |expectations|

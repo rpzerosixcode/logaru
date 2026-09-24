@@ -1,4 +1,4 @@
-# Dependabot configuration for the logstyout gem.
+# Dependabot configuration for the Logaru gem.
 #
 # Keeps Bundler dependencies (Gemfile/gemspec) and GitHub Actions
 # (workflows in .github/workflows) up to date via weekly pull requests.

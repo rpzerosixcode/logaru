@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-require_relative "lib/lso/version"
+require_relative "lib/logaru/version"
 
 Gem::Specification.new do |spec|
-    # Official project and gem name.
-    # "LSO" is used as the shorter Ruby namespace and user-facing reference.
-    spec.name        = "logstyout"
-    spec.version     = LSO::VERSION
+    spec.name        = "logaru"
+    spec.version     = Logaru::VERSION
     spec.authors     = ["rpzerosixcode"]
     spec.summary     = "A Ruby library for stylish log output."
     spec.description = "Ruby library focused on clear, organized, and visually appealing " \
                        "log output for applications."
-    spec.homepage    = "https://github.com/rpzerosixcode/logstyout"
+    spec.homepage    = "https://github.com/rpzerosixcode/logaru"
     spec.license     = "MIT"
 
     spec.required_ruby_version = Gem::Requirement.new(">= 3.3.0")

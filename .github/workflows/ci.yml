@@ -1,11 +1,11 @@
-# Continuous Integration for the logstyout gem.
+# Continuous Integration for the Logaru gem.
 #
 # Runs on pushes and pull requests to main:
 # - RSpec test suite
 # - RuboCop lint (fails on offenses)
 # - Gem build sanity check
 #
-# Ruby versions mirror `required_ruby_version` in logstyout.gemspec (>= 3.3.0).
+# Ruby versions mirror `required_ruby_version` in logaru.gemspec (>= 3.3.0).
 
 name: CI
 
@@ -45,4 +45,4 @@ jobs:
         run: bundle exec rubocop --parallel
 
       - name: Build gem (sanity check)
-        run: gem build logstyout.gemspec --strict
+        run: gem build logaru.gemspec --strict
