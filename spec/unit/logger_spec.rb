@@ -37,6 +37,37 @@ RSpec.describe Logaru::Logger do
         expect(described_class.new.formatter).to be_a(Logaru::Formatter)
     end
 
+    it "uses the default pattern when none is given" do
+        expect(described_class.new.formatter.pattern).to be(Logaru::Formatter::DEFAULT_PATTERN)
+    end
+
+    it "builds its formatter from a pattern" do
+        pattern = proc { |_severity, _datetime, _progname, message| "pattern: #{message}\n" }
+        logger = described_class.new(pattern: pattern)
+
+        expect { logger.info("message") }.to output("pattern: message\n").to_stdout
+    end
+
+    it "builds its formatter from a block" do
+        logger = described_class.new { |_severity, _datetime, _progname, message| "block: #{message}\n" }
+
+        expect { logger.info("message") }.to output("block: message\n").to_stdout
+    end
+
+    it "rejects a formatter combined with a pattern" do
+        expect { described_class.new(formatter: formatter, pattern: proc {}) }.to raise_error(
+            Logaru::InvalidFormatterError,
+            /either formatter or pattern/,
+        )
+    end
+
+    it "rejects a formatter combined with a block" do
+        expect { described_class.new(formatter: formatter) { |*_arguments| "" } }.to raise_error(
+            Logaru::InvalidFormatterError,
+            /either formatter or pattern/,
+        )
+    end
+
     it "writes entries with the default formatter" do
         with_log_path do |path|
             with_file_logger(path) { |logger| logger.info("started") }

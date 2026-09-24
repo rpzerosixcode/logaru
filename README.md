@@ -70,23 +70,41 @@ A `Pathname` or any object responding to `#write` (such as `StringIO` or an alre
 
 ### Formatters
 
-Formatters are instances, so each logger can use its own pattern without touching global state:
+Every logger builds its own `Logaru::Formatter`, so customizing the output never requires injecting one:
 
 ```ruby
-formatter = Logaru::Formatter.new do |severity, datetime, progname, message|
+logger = Logaru::Logger.new(level: :debug, file: "log/application.log") do |severity, datetime, progname, message|
   "[#{datetime}] #{progname || "app"} #{Logaru::Level.name_for(severity).upcase}: #{message}\n"
 end
-
-logger = Logaru::Logger.new(formatter: formatter, level: :debug, file: "log/application.log")
 ```
 
-A pattern is provided as a block or through `pattern:`. It must be able to receive the four arguments (`severity`, `datetime`, `progname`, `message`); variadic patterns such as `|*arguments|` are accepted too:
+The same pattern can be passed as an option, and a formatter instance can still be injected to share one configuration between loggers (`formatter:` and `pattern:` are mutually exclusive):
+
+```ruby
+pattern = proc { |severity, datetime, progname, message| "#{severity} #{message}\n" }
+
+Logaru::Logger.new(pattern: pattern)
+
+formatter = Logaru::Formatter.new(pattern: pattern)
+
+Logaru::Logger.new(formatter: formatter)
+
+Logaru::Logger.new(formatter: formatter, pattern: pattern)
+
+# => Logaru::InvalidFormatterError: pass either formatter or pattern, not both
+```
+
+Formatters keep no global state, so each logger can use its own pattern. A pattern must be able to receive the four arguments (`severity`, `datetime`, `progname`, `message`); variadic patterns such as `|*arguments|` are accepted too:
 
 ```ruby
 Logaru::Formatter.new { |message| "#{message}\n" }
 
 # => Logaru::InvalidPatternError: pattern must accept 4 arguments
 ```
+
+### Thread safety
+
+A logger can be shared between threads: writes — including opening and closing the log file — are serialized by a mutex, so entries are never interleaved and the file is opened only once, even when several threads start together. The formatter pattern is called outside the lock, so it must not depend on mutable shared state.
 
 ### Errors
 

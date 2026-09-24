@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "fileutils"
+require "pathname"
 
 require_relative "errors"
 require_relative "level"
@@ -11,19 +12,29 @@ module Logaru
     class Logger
         attr_reader :formatter, :level, :output
 
-        # Initializes the logger with a formatter, level and optional output.
+        # Initializes the logger with a level and optional output and formatting.
         #
         # +file+ accepts a path (String or Pathname) or any object responding to
         # #write, such as an open File or a StringIO. When it is omitted, entries
         # are written to $stdout. +sync+ controls whether every write is flushed,
         # which defaults to true so that log files are always up to date.
-        def initialize(formatter: nil, level: Level::DEBUG, file: nil, sync: true)
+        #
+        # Formatting is handled by a Logaru::Formatter built here. Pass +pattern+
+        # (or a block) to configure it, or +formatter+ to inject an instance —
+        # never both.
+        #
+        # Entries are written while holding a mutex, so the same logger can be
+        # shared between threads. The formatter pattern is called outside the
+        # lock, so it must not depend on mutable shared state.
+        def initialize(formatter: nil, level: Level::DEBUG, file: nil, sync: true, pattern: nil, &block)
+            validate_formatter_options!(formatter, pattern, block)
             @level = Level.coerce(level)
             @output = file
             @sync = sync
-            @formatter = formatter || Formatter.new
-            @device = nil
+            @formatter = formatter || build_formatter(pattern, &block)
+            @resolved_device = nil
             @owned = false
+            @mutex = Mutex.new
             validate_formatter!
             validate_output!
         end
@@ -69,21 +80,36 @@ module Logaru
 
         # Returns the IO used for writing, opening the log file on first use.
         def device
-            return $stdout if @output.nil?
-
-            @device ||= open_device
+            @mutex.synchronize { resolved_device }
         end
 
         # Closes the log file opened by the logger. The file is reopened on the
         # next write, which keeps external log rotation working. Streams and
         # objects provided through +file+ are left untouched.
+        #
+        # Safe to call from another thread: it waits for the write in progress
+        # before releasing the handle.
         def close
-            @device.close if @owned && @device.respond_to?(:close)
-            @device = nil
-            @owned = false
+            @mutex.synchronize do
+                @resolved_device.close if @owned && @resolved_device.respond_to?(:close)
+                @resolved_device = nil
+                @owned = false
+            end
         end
 
         private
+
+        # Rejects a formatter injected together with a pattern or a block.
+        def validate_formatter_options!(formatter, pattern, block)
+            return unless formatter && (pattern || block)
+
+            raise InvalidFormatterError, "pass either formatter or pattern, not both"
+        end
+
+        # Builds the formatter used when none is injected, honoring a pattern.
+        def build_formatter(pattern, &)
+            Formatter.new(pattern: pattern || Formatter::DEFAULT_PATTERN, &)
+        end
 
         def validate_formatter!
             return if @formatter.respond_to?(:format)
@@ -92,20 +118,37 @@ module Logaru
         end
 
         def validate_output!
-            return if @output.nil?
-            return if @output.is_a?(String) || @output.respond_to?(:to_path) || @output.respond_to?(:write)
+            return if @output.nil? || path_like?(@output) || @output.respond_to?(:write)
 
             raise InvalidOutputError, "output must be a path or an object responding to #write"
         end
 
         def write(message)
-            device.write(message)
+            @mutex.synchronize { resolved_device.write(message) }
         end
 
-        # Returns the target of the log entries, opening the file and reusing it
-        # on the following writes.
+        # Returns the target of the log entries, opening the log file on first
+        # use and reusing it on the following writes. Callers must hold the mutex
+        # so the file is opened (and the parent directories created) only once.
+        def resolved_device
+            return $stdout if @output.nil?
+
+            @resolved_device ||= open_device
+        end
+
+        # Returns true when the value stands for a file path instead of a stream.
+        #
+        # Pathname is handled explicitly because it responds to #write, and that
+        # method writes the whole file in one call: treating a Pathname as a
+        # stream would make every entry overwrite the log file.
+        def path_like?(value)
+            value.is_a?(String) || value.is_a?(Pathname) || (!value.respond_to?(:write) && value.respond_to?(:to_path))
+        end
+
+        # Opens the log file for path targets and returns caller-owned streams as
+        # they are.
         def open_device
-            return @output if @output.respond_to?(:write)
+            return @output unless path_like?(@output)
 
             @owned = true
             open_file(@output)

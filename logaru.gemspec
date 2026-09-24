@@ -6,9 +6,11 @@ Gem::Specification.new do |spec|
     spec.name        = "logaru"
     spec.version     = Logaru::VERSION
     spec.authors     = ["rpzerosixcode"]
-    spec.summary     = "A Ruby library for stylish log output."
-    spec.description = "Ruby library focused on clear, organized, and visually appealing " \
+
+    spec.summary     = "A Ruby library for clear, organized, and configurable log output."
+    spec.description = "Ruby library focused on clear, organized, and configurable " \
                        "log output for applications."
+
     spec.homepage    = "https://github.com/rpzerosixcode/logaru"
     spec.license     = "MIT"
 
