@@ -9,4 +9,10 @@ module Logaru
 
     # Raised when a logger receives an unsupported severity.
     class InvalidLevelError < Error; end
+
+    # Raised when a formatter is configured with an unusable pattern.
+    class InvalidPatternError < Error; end
+
+    # Raised when a logger receives an output that cannot be written to.
+    class InvalidOutputError < Error; end
 end
