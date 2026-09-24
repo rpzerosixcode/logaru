@@ -1,4 +1,4 @@
-# RuboCop configuration for the Logstyout project.
+# RuboCop configuration for the Logaru project.
 # Uses rubocop and rubocop-rake (declared as development dependencies in the gemspec).
 
 plugins:
@@ -16,7 +16,7 @@ AllCops:
 
 # --- Layout ---------------------------------------------------------------
 
-# The project standardizes on 4-space indentation (see logstyout.gemspec).
+# The project standardizes on 4-space indentation (see logaru.gemspec).
 Layout/EndOfLine:
   EnforcedStyle: lf
 
@@ -29,14 +29,14 @@ Layout/IndentationWidth:
 Layout/LineLength:
   Max: 120
   Exclude:
-    - "logstyout.gemspec"
+    - "logaru.gemspec"
 
 # --- Style ----------------------------------------------------------------
 
 Style/Documentation:
   # Top-level namespaces/classes must be documented; skip the version file.
   Exclude:
-    - "lib/lso/version.rb"
+    - "lib/logaru/version.rb"
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

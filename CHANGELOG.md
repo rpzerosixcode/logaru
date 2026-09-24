@@ -17,5 +17,5 @@ No unreleased changes yet.
 
 - Initial release.
 
-[Unreleased]: https://github.com/rpzerosixcode/logstyout/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/rpzerosixcode/logstyout/releases/tag/v1.0.0
+[Unreleased]: https://github.com/rpzerosixcode/logaru/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/rpzerosixcode/logaru/releases/tag/v1.0.0
