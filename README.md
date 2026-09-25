@@ -1,8 +1,12 @@
 # Logaru
 
+![Logaru](docs/assets/logaru-logo.png)
+
+[![Gem](https://img.shields.io/gem/v/logaru.svg)](https://rubygems.org/gems/logaru)
 [![CI](https://github.com/rpzerosixcode/logaru/actions/workflows/ci.yml/badge.svg)](https://github.com/rpzerosixcode/logaru/actions/workflows/ci.yml)
 [![Ruby](https://img.shields.io/badge/ruby-%3E%3D_3.3-ruby.svg)](https://www.ruby-lang.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Author](https://img.shields.io/badge/author-rpzerosixcode-blue.svg)](https://github.com/rpzerosixcode)
 
 A Ruby library focused on clear, organized, and configurable log output.
 
