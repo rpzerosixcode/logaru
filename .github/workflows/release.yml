@@ -1,0 +1,101 @@
+# Release pipeline for the Logaru gem.
+#
+# Runs when a version tag is pushed (for example `v0.1.0`). The tag must match
+# `Logaru::VERSION` in lib/logaru/version.rb:
+#
+# - validate: same matrix and checks as CI — RSpec, RuboCop and gem build on
+#             Ruby 3.3, 3.4 and 4.0 (ubuntu-latest)
+# - publish: version check, build, `gem push` and a GitHub release carrying
+#             the built gem
+#
+# Publishing uses RubyGems trusted publishing (OIDC), so no API token secret is
+# stored here: configure a trusted publisher for `logaru` on RubyGems.org
+# (repository rpzerosixcode/logaru, workflow file .github/workflows/release.yml)
+# before pushing the first tag.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    name: Ruby ${{ matrix.ruby }} | ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        ruby: ["3.3", "3.4", "4.0"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
+      - name: Run RuboCop
+        run: bundle exec rubocop --parallel
+
+      - name: Build gem (sanity check)
+        run: gem build logaru.gemspec --strict
+
+  publish:
+    name: Publish
+    needs: validate
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Ruby 3.3
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Verify version matches the tag
+        run: |
+          version=$(ruby -e 'require_relative "lib/logaru/version"; print Logaru::VERSION')
+
+          if [ "$version" != "${GITHUB_REF_NAME#v}" ]; then
+            echo "Version in lib/logaru/version.rb ($version) does not match the tag (${GITHUB_REF_NAME#v})."
+            exit 1
+          fi
+
+      - name: Build the gem
+        run: gem build logaru.gemspec --strict
+
+      - name: Configure RubyGems credentials
+        uses: rubygems/configure-rubygems-credentials@main
+
+      - name: Publish to RubyGems
+        run: gem push logaru-${GITHUB_REF_NAME#v}.gem
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create "$GITHUB_REF_NAME" logaru-${GITHUB_REF_NAME#v}.gem
+          --title "Logaru ${GITHUB_REF_NAME}"
+          --notes "See the [changelog](https://github.com/rpzerosixcode/logaru/blob/main/CHANGELOG.md) for details."

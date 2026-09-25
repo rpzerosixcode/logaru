@@ -1,6 +1,6 @@
 # Features
 
-What Logaru offers today. Current version: `0.1.0` (pre-`1.0.0` development release). Usage examples are in the [README](../README.md); internal design in [ARCHITECTURE.md](ARCHITECTURE.md).
+What Logaru offers in `1.0.0`. Usage examples are in the [README](../README.md); internal design in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Severities and filtering
 
@@ -35,4 +35,4 @@ What Logaru offers today. Current version: `0.1.0` (pre-`1.0.0` development rele
 
 ## Not available yet
 
-Log rotation by size or date, asynchronous logging, ANSI colors, message sanitization (see [SECURITY.md](SECURITY.md)) and cross-process locking are not implemented. The public API may still change until `1.0.0`.
+Log rotation by size or date, asynchronous logging, ANSI colors, message sanitization (see [SECURITY.md](SECURITY.md)) and cross-process locking are not implemented. They are candidates for future minor versions and do not affect the `1.0` API, which follows Semantic Versioning.

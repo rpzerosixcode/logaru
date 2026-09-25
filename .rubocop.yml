@@ -13,6 +13,8 @@ AllCops:
     - "tmp/**/*"
     - "coverage/**/*"
     - "pkg/**/*"
+    # Local scratch area: manual test scripts and throwaway files.
+    - ".dev/**/*"
 
 # --- Layout ---------------------------------------------------------------
 

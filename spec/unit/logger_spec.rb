@@ -181,6 +181,31 @@ RSpec.describe Logaru::Logger do
         )
     end
 
+    it "logs through the generic entry point with a textual severity" do
+        output = StringIO.new
+        logger = described_class.new(formatter: formatter, file: output, level: :warn)
+
+        logger.log("WARN", "message", progname: "web")
+
+        expect(formatter).to have_received(:format).with(
+            Logaru::Level::WARN,
+            kind_of(Time),
+            "web",
+            "message",
+        )
+        expect(output.string).to eq("formatted message\n")
+    end
+
+    it "filters entries passed to the generic entry point" do
+        output = StringIO.new
+        logger = described_class.new(formatter: formatter, file: output, level: :error)
+
+        logger.log(:info, "hidden")
+
+        expect(output.string).to be_empty
+        expect(formatter).not_to have_received(:format)
+    end
+
     it "rejects an invalid formatter" do
         expect { described_class.new(formatter: Object.new) }.to raise_error(
             Logaru::InvalidFormatterError,

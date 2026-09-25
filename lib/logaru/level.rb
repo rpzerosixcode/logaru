@@ -25,7 +25,7 @@ module Logaru
         class << self
             # Converts a numeric or textual level to its numeric value.
             def coerce(value)
-                return value if LEVELS.value?(value)
+                return value if value.is_a?(Integer) && LEVELS.value?(value)
 
                 name = value.to_s.downcase
                 return LEVELS.fetch(name) if LEVELS.key?(name)

@@ -94,3 +94,14 @@ CI (`.github/workflows/ci.yml`) runs on every push and pull request to `main` an
 * Dependabot opens weekly pull requests for Bundler and GitHub Actions dependencies.
 
 Locally, `bundle exec rake` runs the same checks available in the development environment.
+
+## Release pipeline
+
+`.github/workflows/release.yml` runs when a `v*` tag is pushed (the tagging steps are in the [README](../README.md#releasing)):
+
+1. **Validate** — the same matrix and checks as CI: RSpec, `bundle exec rubocop --parallel` and `gem build logaru.gemspec --strict` on `ubuntu-latest` with Ruby `3.3`, `3.4` and `4.0` (fail-fast disabled).
+2. **Publish** — fails unless the tag equals `Logaru::VERSION`, rebuilds the gem, authenticates to RubyGems over OIDC (trusted publishing), pushes the gem and creates the GitHub release with the gem attached.
+
+The validate job is a mirror of the CI test job, so a tag can never publish code that CI would reject. Publishing runs `gem build logaru.gemspec --strict`, which writes `logaru-<version>.gem` in the workspace; locally, `bundle exec rake build` (from `bundler/gem_tasks`, required by the `Rakefile`) writes `pkg/logaru-<version>.gem`. `pkg/` and `*.gem` are git-ignored. The release job declares `id-token: write` for OIDC and `contents: write` to create the release.
+
+`Logaru::VERSION` (`lib/logaru/version.rb`) is the single source of truth: the gemspec reads it, the workflow compares it with the tag and `Gemfile.lock` records it. A release therefore means bumping that file, moving the `Unreleased` entries into a dated section in `CHANGELOG.md` and pushing the `v<version>` tag.

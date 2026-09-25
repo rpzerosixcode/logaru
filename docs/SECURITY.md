@@ -2,7 +2,7 @@
 
 How Logaru handles untrusted input, and what it does not protect against.
 
-Supported versions: `0.1.0` is a pre-`1.0.0` development release; security fixes are applied to the `develop` branch until `1.0.0` is published.
+Supported versions: the latest `1.x` release. `1.0.0` is the first stable version; fixes are prepared on `develop`, merged into `main` and published as a new patch or minor release from a tag matching `Logaru::VERSION`.
 
 ## Threat surface
 

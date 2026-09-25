@@ -29,8 +29,11 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency "rubocop-rake", "~> 0.7"
 
     spec.metadata["homepage_uri"] = spec.homepage
+    spec.metadata["source_code_uri"] = "#{spec.homepage}/tree/main"
+    spec.metadata["documentation_uri"] = "#{spec.homepage}#readme"
     spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
-    spec.metadata["rubygems_mfa_required"] = "true"
+    # RubyGems 4 removed `keywords=`; metadata keeps the keywords working on
+    # RubyGems 3 (Ruby 3.3/3.4) and 4 (Ruby 4.0).
     spec.metadata["keywords"] = "ruby, logger, logging, logs"
-
+    spec.metadata["rubygems_mfa_required"] = "true"
 end

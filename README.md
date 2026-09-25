@@ -8,7 +8,9 @@
 
 A Ruby library focused on clear, organized, and configurable log output.
 
-> **Note:** This project is currently under development (`0.1.0`). Official version history and stability guarantees will start with version `1.0.0`. The current codebase provides the gem skeleton and core logging functionality on top of which the project will continue to evolve.
+> 🇧🇷 **Made in Brazil.**
+>
+> Logaru is a Brazilian Ruby gem, developed in Brazil.
 
 ## Installation
 
@@ -35,7 +37,7 @@ gem install logaru
 ```ruby
 require "logaru"
 
-Logaru::VERSION # => "0.1.0"
+Logaru::VERSION # => "1.0.0"
 
 Logaru.root # => absolute path to the gem root
 ```
@@ -150,6 +152,18 @@ Sanity-check the gem build (also run in CI):
 ```bash
 gem build logaru.gemspec --strict
 ```
+
+## Releasing
+
+Release by pushing a tag that matches `Logaru::VERSION` (see `lib/logaru/version.rb`):
+
+```bash
+git tag v0.1.0
+
+git push origin v0.1.0
+```
+
+`.github/workflows/release.yml` then runs the same checks as CI (RSpec, RuboCop and a strict gem build on Ruby 3.3, 3.4 and 4.0), checks the tag against `Logaru::VERSION`, publishes the gem to RubyGems and opens a GitHub release with the gem attached. Publishing uses RubyGems trusted publishing (OIDC), so no API token is stored in the repository — configure a trusted publisher for `logaru` on RubyGems.org (workflow file `.github/workflows/release.yml`) before the first tag.
 
 ## Documentation
 

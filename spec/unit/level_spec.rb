@@ -23,5 +23,9 @@ RSpec.describe Logaru::Level do
             Logaru::InvalidLevelError,
             /unsupported log level/,
         )
+        expect { described_class.coerce(described_class::INFO + 0.0) }.to raise_error(
+            Logaru::InvalidLevelError,
+            /unsupported log level/,
+        )
     end
 end

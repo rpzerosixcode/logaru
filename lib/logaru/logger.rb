@@ -160,6 +160,8 @@ module Logaru
         def open_file(path)
             path = path.to_path if path.respond_to?(:to_path)
             FileUtils.mkdir_p(File.dirname(path))
+            # The handle is intentionally kept open until #close, so the block
+            # form of File.open would defeat the reuse between writes.
             file = File.open(path, "a") # rubocop:disable Style/FileOpen
             file.sync = @sync
             file
