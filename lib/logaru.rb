@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require_relative "logaru/version"
+require_relative "logaru/errors"
+require_relative "logaru/level"
+require_relative "logaru/formatter"
+require_relative "logaru/logger"
 
 # Entry point of the Logaru library.
 module Logaru

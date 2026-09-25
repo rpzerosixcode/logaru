@@ -6,9 +6,12 @@ Gem::Specification.new do |spec|
     spec.name        = "logaru"
     spec.version     = Logaru::VERSION
     spec.authors     = ["rpzerosixcode"]
-    spec.summary     = "A Ruby library for stylish log output."
-    spec.description = "Ruby library focused on clear, organized, and visually appealing " \
+
+    spec.summary     = "A Ruby library for clear, organized, and configurable log output."
+
+    spec.description = "Ruby library focused on clear, organized, and configurable " \
                        "log output for applications."
+
     spec.homepage    = "https://github.com/rpzerosixcode/logaru"
     spec.license     = "MIT"
 
@@ -26,6 +29,11 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency "rubocop-rake", "~> 0.7"
 
     spec.metadata["homepage_uri"] = spec.homepage
+    spec.metadata["source_code_uri"] = "#{spec.homepage}/tree/main"
+    spec.metadata["documentation_uri"] = "#{spec.homepage}#readme"
     spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
+    # RubyGems 4 removed `keywords=`; metadata keeps the keywords working on
+    # RubyGems 3 (Ruby 3.3/3.4) and 4 (Ruby 4.0).
+    spec.metadata["keywords"] = "ruby, logger, logging, logs"
     spec.metadata["rubygems_mfa_required"] = "true"
 end
