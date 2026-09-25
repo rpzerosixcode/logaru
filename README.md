@@ -68,6 +68,8 @@ logger.close   # closes the file; it is reopened on the next write
 
 A `Pathname` or any object responding to `#write` (such as `StringIO` or an already open `File`) is accepted as well. Writes are flushed by default (`sync: true`) so the file is always up to date, and the logger only closes files it opened itself — streams provided through `file:` remain the caller's responsibility.
 
+Rotating the log is left to your tooling: call `logger.close`, rename or replace the file, and the next entry reopens the path (see [Architecture](docs/ARCHITECTURE.md#log-file-lifecycle)).
+
 ### Formatters
 
 Every logger builds its own `Logaru::Formatter`, so customizing the output never requires injecting one:
@@ -104,7 +106,7 @@ Logaru::Formatter.new { |message| "#{message}\n" }
 
 ### Thread safety
 
-A logger can be shared between threads: writes — including opening and closing the log file — are serialized by a mutex, so entries are never interleaved and the file is opened only once, even when several threads start together. The formatter pattern is called outside the lock, so it must not depend on mutable shared state.
+A logger can be shared between threads: writes are serialized, so entries are never interleaved and the log file is opened only once, even when several threads start together. Patterns run outside that lock, so they should not depend on mutable shared state — see [Concurrency](docs/ARCHITECTURE.md#concurrency).
 
 ### Errors
 
@@ -149,47 +151,13 @@ Sanity-check the gem build (also run in CI):
 gem build logaru.gemspec --strict
 ```
 
-## Project structure
-
-```text
-lib/
-  logaru.rb            # Entry point — Logaru namespace
-  logaru/version.rb    # Logaru::VERSION
-  logaru/errors.rb     # Logaru::Error and the specific errors
-  logaru/level.rb      # Logaru::Level severities
-  logaru/formatter.rb  # Logaru::Formatter — patterns and arity validation
-  logaru/logger.rb     # Logaru::Logger — levels, output and file management
-
-spec/
-  spec_helper.rb       # RSpec configuration (loads spec/support)
-  unit/                # Unit tests
-  integration/         # Integration tests
-  e2e/                 # End-to-end tests
-  support/              # Helpers / shared examples
-
-docs/                   # Guides and additional documentation
-
-.github/workflows/
-  ci.yml                # CI: RSpec + RuboCop + gem build (Ruby 3.3/3.4/4.0)
-
-Rakefile                # default: spec + rubocop
-logaru.gemspec          # Gem metadata and dependencies
-Gemfile                 # source + gemspec
-.rubocop.yml            # Style rules
-.rspec                  # --require spec_helper
-```
-
-## CI
-
-Workflow: `.github/workflows/ci.yml`
-
-* Triggers on `push` and `pull_request` to `main` and `develop`.
-* Matrix: `ubuntu-latest` × Ruby `3.3`, `3.4`, `4.0`.
-* Steps: checkout → `ruby/setup-ruby` (`bundler-cache: true`) → `bundle exec rspec` → `bundle exec rubocop --parallel` → `gem build logaru.gemspec --strict`.
-
 ## Documentation
 
-Documentation will be expanded as the project approaches its `1.0.0` release.
+* [Architecture](docs/ARCHITECTURE.md) — components, entry lifecycle, output resolution and concurrency model.
+* [Features](docs/FEATURES.md) — what the library does today and what is still missing.
+* [Security](docs/SECURITY.md) — threat surface, known limitations and how to report a vulnerability.
+
+The repository layout, the CI matrix and the Dependabot setup are documented in [Architecture](docs/ARCHITECTURE.md#repository-layout).
 
 ## Requirements
 
